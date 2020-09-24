@@ -1,0 +1,68 @@
+\chapter{Motion Planning}
+
+In an autonomous vehicle, there is a decision making heirarchy. First, route planning then behavioural decision making (navigating through the route - making decisions about this such as traffic rules), which then determines motion planning which in turn creates trajectories for the vehicle to follow.
+
+\begin{itemize}
+    \item Route Planning
+    \item Behavioral Decision Making
+    \item Motion Planning
+    \item Vehicle Control
+\end{itemize}
+
+There are two functions used in graph algorithms that are critical:
+
+$g(n)$ = It is the cost of reaching the current node n from the start node
+$h(n) = It is a heuristic function that gives us an estimate of the cost of reaching the end node from the current node n.
+$h(n) \leq h*(n), 
+Here, h*(n) is the actual cost of reaching the end node from the current node n.
+
+For all search functions we will be storing the nodes in a priority queue Q which will be sorted in the increasing order of f(n) for each node.
+$f(n) = g(n) + h(n)$
+
+\section{Basic Algo for Search}
+
+\begin{itemize}
+    \item Initialize empty priority queue
+    \item current node = start function 
+    \item For every adjacent node, calculate respective f values and insert into queue.
+    \item Once adjacent nodes are visited, mark as done (BFS)
+    \item From queue, pick min f value and use as current node. If this isn't the target goal, repeat process from 3. again.
+\end{itemize}
+
+The above is essentially BFS. BFS gives us the shortest path between two nodes - but it needn't be the best path - traffic or bad roads?
+
+\section{A* search algorithm}
+
+It is a directed search algorithm, meaning instead of searching in all directions we search in the direction of the goal thus reducing the search time.
+
+Here for every node, we calculate g(n) and h(n). If h(n) > h*(n), we might not end up with the optimal path to the goal.
+
+The priority queue is sorted in increasing order of the f-values of the nodes.
+
+This gives us the most optimal path to the goal in a short time.
+
+\section{Rapidly Exploring Random Trees}
+
+Often, we are not given a tree/graph with various nodes and hence cannot use graph methods. Hence, we will use rapidly exploring random trees. 
+
+The idea is simple - start with just the start node. Now, create a node at a random point in the configuration space. If the random node does not lie inside any obstacle, we find a node in the graph which is closest to this node. If the distance between them is <= delta we connect them with an edge. If > delta we create another node along the line connecting the two nodes at a distance delta from the nearest node on the graph. We connect these two nodes with an edge and finally push this node inside the graph. This is repeated until we reach the goal location.
+
+Let's assume that we have a set of global points which depict our path to a location. We are required to try sticking to these and the reference trajectory. Motion planning to this end, is mainly control. 
+
+\section{Trajectory Generation}
+
+Most of this content comes \href{https://raw.githubusercontent.com/RoboticsIIITH/summer-sessions-2020/master/lecture-slides/motion_planning/presentation.pdf}{these slides.}
+
+There are two categories of robots broadly - non-holonomic and holonomic. Holonomic robots have the advantage of moving in any specific direction (like a drone) but non-holonomic (like cars) can't. A robotic arm is also non-holonomic since it is limited to a certain length.
+
+We will tend to use with non-holonomic robots which are largely harder to use than holonomic. A drone has complete freedom to rapidly change directions, but a car would need to go in a circle to take a U turn for instance. Hence, with non-holonomic robots, we cannot rely on immediate configurations to move but rather have an entire trajectory to plan the movement. 
+
+Often we'll have user requirements such as velocity, time to cover a distance and so on. So, here we will consider a 2D configuration space which is static in nature.
+
+\subsection{Collision Avoidance}
+
+This uses the idea of circles around the agents. If we predict that two agents are going to have "overalpping circles", it suggests a potential collision. Once again, a lot of math that I didnt understand - revisit later.
+
+\section{Optimal Control}
+
+Like any optimization problem, here too we are trying to minimize a cost function that has some constraints to it. We can choose to model it using a lagrangian for instance.

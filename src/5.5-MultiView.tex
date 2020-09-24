@@ -1,0 +1,15 @@
+\chapter{Bundle Adjustment}
+
+Usually, we have some noise in our measurements, either with our extrinsics or intrinsics. Hence, after triangulation, we will have some noise in our predictions. Refining the estimates is bundle adjustment. "Given a set of images depicting a number of 3D points from different viewpoints, bundle adjustment can be defined as the problem of simultaneously refining the 3D coordinates describing the scene geometry, the parameters of the relative motion, and the optical characteristics of the camera(s) employed to acquire the images, according to an optimality criterion involving the corresponding image projections of all points." from wikipedia.
+
+Bundle adjustment is a non convex optimization problem that solves for camera parameters and 3D point locations of the environment. It takes the initial estimates of our camera estimates, 3D point locations, the image correspondences for the 3D point. By non convex, we mean that there are multiple local minimas as well. Hence, bundle adjustment only finds the local minima and assumes that the initial estimates are pretty good to begin with.
+
+We are essentially minimizing the sum of squared errors after reprojecting the points over various images. This is generally expressed as:
+
+\begin{equation}
+    arg \min_{X_j, P_i} \sum_{i=1}^M\sum_{j=1}^N \norm{x_{ij} = P_iX_j}^2
+\end{equation}
+
+where $P_i$ is the projection matrix of the ith view, $x_{ij}$ is the image of the $jth$ 3D point in the ith view.
+
+Look at the chapter on optimization in the SLAM section to see how we can solve such a problem - it involves using an iterative approach with gradients. This is a non-convex optimization problem so we can't find a closed form solution any way.

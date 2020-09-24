@@ -1,0 +1,44 @@
+\chapter{Robot Operating System (ROS)}
+
+With ROS, we needn't write drivers for our robots and is an abstraction of the hardware and low level device control. It is essentially a peer to peer connection (not server-client). Nodes can share information among themselves by identifying as a subscriber and a publisher. It is also multilingual (C++ and Python codes can interact) as communication occurs via messages. ROS is also distributed across systems and has a large open source community. The commands haven't really been written here.
+
+\href{https://jack-kawell.com/2019/06/24/setting-up-a-ros-development-environment-in-windows/}{This} was a very simple tutorial on setting up ROS for WSL.
+
+\href{http://wiki.ros.org/ROS/Tutorials/}{This tutorial on using ROS} covers everything in sufficient detail. This chapter doesn't really do the concept justice - just name drops some concepts really. I also liked the book 'ROS by Example' to see things working at a larger scale.
+
+\section*{ROS Master}
+
+ROS Master exists to store the addresses of the other nodes and helps nodes find each other, exchange messages or invoke services.
+
+\section*{Nodes}
+
+ROS nodes always register to the ROS master. Nodes are single purpose ecxecutable programs and contain main logic. \textit{rosnode list} will show list of active nodes. \textit{rosrun package\_name node\_name} will run the package on the node. 
+
+\section*{Topic}
+
+Each node publishes to a certain topic - to which other nodes can subscribe and then communication occurs over this topic. Hence, subsribers don't care about who is publishing but rather the topic itself. For example: If we have a camera that captures image and RGB information, this information could be required by various nodes such as odomtry, DL pipeline, etc, so these nodes can subscribe to a topic that the camera publishes to.
+
+\section*{Messages}
+
+Nodes communicate with each other by passing messages. A message is simply the communications that are exchanged over a topic.
+
+\section*{Components on a Mapping Robot}
+
+A robot is equipped with lidar, kinect, and odometry sensor. It will publish RGB information, depth information, and image information. This will be published so that an another node can process this information and form a synchronized image. A laser scanner and odometry will send information (these may have errors). \textit{rtabmap} a mapping algorithm will use these information and send map data to a top - an assembled point plot.
+
+\section*{ROSBag Files}
+
+Bags are a format for saving and playing back ROS message data. It is very useful for debugging. For instance, if have a self driving car, we don't want to use it everytime. With a ROSBag file we can recreate the conditions as earlier with the same timestamps as well. Hence it is suited for logging and recording datasets for later vizualization and analysis.
+
+\section*{Creating ROS Workspace}
+
+ROS codes should be maintained inside a catkin workspace. We make packages and nodes inside this workspace. You have to make these packages later to build these packages to binaries that can be executed.
+
+\section*{Some Packages}
+
+\subsection*{TF Transformation Package}
+
+This is a package that lets us keep track of multiple coordinate frames. Obviously, for various components of a robot, each will likely work with it's own frame of reference - relevant to itself. This maintaines a relationship between coordinate frames in a tree structure buffered in time. We can then use the API to transform points and vectors between coordinate frames.
+
+\subsection*{TF Listener and Broadcaster}
+

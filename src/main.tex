@@ -1,0 +1,137 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{pdfpages}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{pdfpages}
+\usepackage[some]{background}
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert} % Defines norm command
+\newcommand{\abs}[1]{\lvert#1\rvert}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+
+
+\title{\huge \textbf{Robotics Research Center Summer School}}
+\author{Jaidev Shriram}
+\date{}
+
+\usepackage{lipsum}
+
+\definecolor{titlepagecolor}{cmyk}{1,.60,0,.40}
+
+\backgroundsetup{
+scale=1,
+angle=0,
+opacity=1,
+contents={\begin{tikzpicture}[remember picture,overlay]
+ \path [fill=titlepagecolor] (current page.west)rectangle (current page.north east); 
+ \draw [color=white, very thick] (5,0)--(5,0.5\paperheight);
+\end{tikzpicture}}
+}
+
+\makeatletter                   
+\def\printauthor{%                  
+    {\large \@author}}          
+\makeatother
+
+\author{%
+    Jaidev Shriram \\
+    IIIT-H \\
+}
+
+\begin{document}
+
+\input{cover}
+
+\tableofcontents{}
+
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{0pt}%
+
+\part{Math Review}
+
+\input{1.1-Math}
+
+\input{1.2-Math}
+
+\part{Deep Learning}
+
+\input{2.1-Deep Learning}
+
+\input{2.2-Regression}
+
+\input{2.3-Deep Learning}
+
+\input{2.4-Neural Networks}
+
+\input{2.5-CNN}
+
+\input{2.6-RNN}
+
+\input{2.7 - Adversarial}
+
+\part{Robot Operating System}
+
+\input{3.1-ROS}
+
+\part{Rigid Body Transformations and Projective Geometry}
+
+\input{4.1-RigidBody}
+
+\input{4.2-RigidBody}
+
+\part{Multiple View Geometry}
+
+\input{5.1-MultiViewGeometry}
+
+\input{5.2-MultiView}
+
+\input{5.3-Epipolar}
+
+\input{5.4-Triangulation}
+
+\input{5.5-MultiView}
+
+\part{State Estimation}
+
+\input{6.1-StateEstimation}
+
+\part{SLAM}
+
+\input{7.1-SLAM}
+
+\input{7.2-SLAM}
+
+\part{Motion Planning}
+
+\input{8.1-MotionPlanning}
+
+% \part{Dynamics and Drones}
+
+% \input{9.1-dynamics}
+
+\part{Visual Servoing}
+
+\input{10.1-VisualServoing}
+
+\part{Reinforcement Learning}
+
+\input{RL}
+
+\end{document}

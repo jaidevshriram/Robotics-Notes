@@ -1,0 +1,91 @@
+\chapter{Recurrent Neural Network}
+
+So far, we've usually considered networks that are feed forward - we keep moving forward in a network. But sometimes, we want to have variable outputs, variable input (sentiment analysis with varying sentences), or both (machine translation for instance). This is where recurrent neural network comes in. 
+
+In general, RNN have a core cell that takes an input. The RNN has an internal hidden state that gets updated when there is a new input.
+
+\begin{equation}
+    h_t = f_W(h_{t-1}, x_t)
+\end{equation}
+
+where $h_t$ is the new hidden state, $f_W$ a function with parameters $W$. $x_t$ is the input at time $t$, and $h_{t-1}$ is a hidden state that will get updated with the new input. Note that the parameters don't change with time.
+
+So this function could look like
+
+\begin{align}
+    h_t &= tanh(W_{hh}h_{t-1} + W_{xh}x_t) \\
+    y_t &= W_{hy}h_t
+\end{align}
+
+So the computational graph would have a series of hidden states with function blocks inbetween that take different inputs. The hidden states can then be fed to another layer that gives an output y. This output $y$ could have a loss. Hence, we'll have a loss for each input and we can combine all the loss.
+
+Depending on the situation, we will determine what outputs are relevant. So for sentiment analysis, the final hidden state's output will be desired. 
+
+In many-to-many networks, we can use an encoder-decorder model where we have many-to-one + one-to-many. 
+
+\textbf{MultiLayer RNN}
+
+Here, we have various hidden states for a single layer of the RNN, and so on for every layer. Generally, super deep RNNs aren't very common. 
+
+\section{Training}
+
+RNNs are commonly used for language modelling problems. During a forward pass, it may take letters at various steps. So, for a letter prediction model, we want the output from each hidden state to be ideally the next letter (from our training example). Now, if we train this model with various sequences, we should ideally get a decent predictive network. '
+
+What's interesting here is that we are training a network based on input it receives over time, or we will backpropogate through time. This is bad because we have a lot of inputs often and it is not efficient to do iterative algorithms for large inputs when we make tiny steps. 
+
+Hence, we tend to use truncated backpropogation, where we don't backprop ALLL the way to the start, but do it only for a set of hidden states. Hence, we train group by group. This is analogous to SGD where we use minibatches to train our data. 
+
+Now, we can rewrite the function earlier as follows:
+
+\begin{equation}
+    h_t = tanh(W\begin{bmatrix}h_{t-1}\\
+    x_t\end{bmatrix}) \text{ where $W$ is $(W_{hh} W_{xh})$}
+\end{equation}
+
+Now, note that the gradient of this is the transpose of the weight matrix, imagine that when we compute gradient, we are essentially chaining a lotttt of these matrices. Then, our gradient will explode when we have large time ranges. This is usually solved by clipping gradients. But, gradients also vanish (get too small) which is a harder problem. This is solved by LSTM (explored later)
+
+\section{Image Captioning}
+
+There are various approaches to image captioning but in one approach, we have a CNN that feeds into a hidden state, and the RNN will have various elements of the image as inputs. Then, we can run this in a supervised nature with text captions. 
+
+\section{LSTM}
+
+LSTMs are long short term memory and were introduced long ago (1997 or so). In a vanilla RNN, we have a hidden state, but in LSTM we have two hidden states $c_t$ and $h_t$, where $c_t$ is hidden and not really used to compute outputs. 
+
+Just like a vanilla RNN, we have our previous hidden state, current input and stack them. We will then multiply this with a weight matrix which are used to compute four gates. They are 
+
+\begin{itemize}
+    \item i (input gate) - how much we want to input into cell
+    \item f (forge gate) - how much we want to forget 
+    \item o (output gate) - How much we want to reveal
+    \item g (nothing special lol) - How much to write to cell
+\end{itemize}
+
+\begin{equation}
+    \begin{pmatrix}
+    i \\
+    f \\
+    o\\
+    g\\
+    \end{pmatrix} = \begin{pmatrix}
+    \sigma \\
+    \sigma \\
+    \sigma \\
+    tanh
+    \end{pmatrix} W \begin{pmatrix}h_{t-1} \\ x_t \end{pmatrix}
+\end{equation}
+
+with the update rules
+
+\begin{align}
+    c_t &= f\cdot c_{t-1} + i\cdot g\\
+    h_t &= o\cdot tanh(c_t)
+\end{align}
+
+We use a cell state to reveal some information to the outside world ($h_t$) using tanh which is determined by $o$ gate. Now, if we look at this closer (look at gradient flow diagrams), we see that with LSTMs, the gradient flow is uninterrupted.  
+
+LSTMs have a similar approach to resnet as gradients are able to flow well backward. The idea of highway networks is quite common and can be explored in more detail.
+
+\textbf{Gated Recurrent Unit}
+
+This is another a popular variant of LSTM that is designed similarly. There is nothing inherently better about GRU, just that different RNNs can be used for various needs.

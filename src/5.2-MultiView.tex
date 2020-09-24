@@ -1,0 +1,161 @@
+\chapter{Camera Calibration Methods}
+
+As seen earlier, camera calibration is the process of determining the intrinsic of a matrix. This is done after obtaining data correspondences between the world coordinate system and the image system.
+
+\section{Direct Linear Transform}
+
+Most of this has been taken from Cyril Stachniss' slides which may be found \href{https://github.com/RoboticsIIITH/summer-sessions-2020/blob/master/lecture-slides/Multiple\%20View\%20Geometry/lecture-2/pho1-16-DLT-calibration.pptx.pdf}{here} and the video \href{https://www.youtube.com/watch?v=3NcQbZu6xt8}{here}.
+
+The task is to estimate the 11 elements of P when given 3D coordinates of object points in world frame $X_i$ and image pixel coordinates $x_i$. This essentially means that we have an uncalibrated camera!
+
+Hence, $x_i = PX_i$ where we map a world coordinate to a pixel coordinate. When we know the world coordinate, the mapping in the image, our task is to calculate the matrix $P$. 
+
+What is in the matrix P? $KR[I_3|-X_0]$ where $X_0$ is the location of the camera, $R$ is the orientation, and $K$ is the intrinsics which store camera calibration properties. Hence, the projection matrix contains intrinsics and extrinsics. There are 3 translation parameters in $X_0$, 3 in rotation, and 5 in intrinsics.
+
+There are a lot of unkowns here, so how much information is required? We have 11 unknowns, and for each point, we get two equations. That is,
+
+\begin{equation}
+    \begin{bmatrix}
+    x \\
+    y\\
+    1
+    \end{bmatrix} = P\begin{bmatrix}
+    X \\
+    Y\\
+    Z\\
+    1
+    \end{bmatrix}
+\end{equation}
+
+On solving this, we'll get a solution for $x$ and one for $y$. Hence, we will need around 6 points (6*2=12) to obtain the matrix.
+
+If we had a calibrated camera, we have just 6 unknowns and can make do with just 3 points - using spatial resection.
+
+Direct Linear Transform lets us compute this matrix and assumes an affine system - no non-linear noise on the image. Let us make the rows in our projection matrix a vector. Hence,
+
+\begin{equation}
+    x_i = \begin{bmatrix}
+    A^T\\
+    B^T\\
+    C^T
+    \end{bmatrix}X_i = \begin{bmatrix}
+    A^TX_i\\
+    B^TX_i\\
+    C^TX_i
+    \end{bmatrix}
+\end{equation}
+
+In the end, we want to represent points back in euclidian coordinates. Hence, we will set the third element in our image coordinate to 1. Or,
+
+\begin{equation*}
+    \begin{bmatrix}
+    x_i \\
+    y_i \\
+    1
+    \end{bmatrix} = \begin{bmatrix}
+    u_i \\
+    v_i \\
+    w_i
+    \end{bmatrix} = \begin{bmatrix}
+    A^TX_i\\
+    B^TX_i\\
+    C^TX_i
+    \end{bmatrix}
+\end{equation*}
+
+This would then imply that:
+
+\begin{equation}
+\begin{split}
+    &x_i = \frac{u_i}{w_i} = \frac{A^TX_i}{C^TX_i} \\
+    &x_iC^TX_i - A^TX_i = 0
+\end{split}
+\end{equation}
+
+\begin{equation}
+\begin{split}
+    &y_i = \frac{v_i}{w_i} = \frac{B^TX_i}{C^TX_i} \\
+    &y_iC^TX_i - B^TX_i = 0
+\end{split}\end{equation}
+
+Now, notice that we have a system of equations - where A, B, C are the variables. 
+
+Let us combine the elements of A, B, C into a single matrix essentially giving us a 12 dim column vector (dimensions of P are $3\times4$ but there are still only 11 degrees of freedom). Let this vector be $p$.
+
+Hence,
+
+\begin{equation}
+\begin{split}
+    a_{x_i}^Tp=0 \\
+    a_{y_i}^Tp=0
+\end{split}
+\end{equation}
+
+where we define $a_{x_i}^T$ as the column vector = $(-X_i^T, 0^T, x_iX_i^T)^T$. Similarly, $a_{y_i}^T$ can be written as $(0^T, -X_i^T, y_iX_i^T)^T$. 
+
+This will hold for all the data points that we have naturally. We can also stack these input elments such that:
+
+\begin{equation}
+    \begin{bmatrix}
+    \vdots \\
+    a_{x_i}^T \\
+    a_{y_i}^T \\
+    \vdots
+    \end{bmatrix} p = 0
+\end{equation}
+
+\textit{Let $M$ be the matrix with $a_{x_i}, a_{y_i}$}.
+
+\subsection{SVD Solution}
+
+This is a homogeneous system of equations and can be solved using SVD. Solving this equation is equivalent to finding the nullspace of M. Ideally, we get 0 for $Mp$ but with so many datapoints, it is possible that it is not an exact solution. Hence, we just try to find the solution $p$ that minimizes the RHS. We shall use the least squared error - $w^Tw$ as the result to minimize.
+
+Now, if we use SVD:
+
+\begin{equation}
+    M = U \times S \times V^T
+\end{equation}
+
+where S is a diagonal matrix with elements that are singular values. Ideally, we want a $0$ singular value. The matrix $V$ has vectors that correspond to each singular value. We will choose the one corresponding to the smallest singular value and call that our solution for $p$.
+
+\textbf{Why do we do this?}
+
+As per \href{http://newton.uam.mx/xgeorge/uea/graficacionII/homogeneous_equations.pdf}{this resource}, we can look at it this way:
+
+\begin{itemize}
+    \item If we have as many equations as unknowns, the diagonal matrix will have just one entry which is 0! The vector that corresponds to this will hence logically be the rightmost one in the $V$.
+    \item For an over-constrained situation (more equations that unknowns), there is likely no exact situation (is what was mentioned earlier as well - we minimize the RHS). Hence, we are interested in the solution that minimizes the sum of squared errors - the smallest diagonal entry.
+\end{itemize}
+
+\textbf{There is not always a solution.} This is when all given points are on the same plane - we have a rank deficiency (entire rows/columns are the same!). There are also some other scenarios where this is possible. This situation is quite common when we take pictures of a wall - in which case we get a degenerate solution.  
+
+\subsubsection{Obtaining K, R, $X_0$}
+
+This is a tricky procedure. Look at \href{https://youtu.be/3NcQbZu6xt8?t=1543}{this video clip} to understand how it is done. It involves finding $X_0$ first by writing $P=H_{3\times3}h_{3\times1}$ where $H=KR$. Hence, $H^{-1}P = H^{-1}Hh = h$ is the camera center. Now, to find $K, R$, $K$ is a triangular matrix while $R$ is a rotation matrix. We can use QR decomposition to find these matrices then! 
+
+\subsection{Lagrange Multiplier Solution}
+
+The following section is largely from \href{https://github.com/RoboticsIIITH/summer-sessions-2020/blob/master/lecture-slides/Multiple\%20View\%20Geometry/lecture-1/MVG_Session_1.pdf}{Rahul Sajnani's slides}.
+
+As mentioned earlier, we are trying to minimize the RHS. This RHS is written as $M\cdot p$ and the squared error is $(M\cdot p)^T\cdot(M\cdot p)$. This is subject to the constraint that $p\neq0$ obviously. Hence, we can solve this using lagrange multipliers.
+
+We have the follow the optimisation problem:
+
+\begin{equation}
+    min_P(M\cdot p)^T\cdot(M\cdot p) - \lambda (p^T \cdot p -1)
+\end{equation}
+
+On differentiating the above function,
+
+\begin{equation}
+\begin{split}
+    2\cdot M^T\cdot M\cdot p - 2\lambda\cdot p &= 0 \\
+    (M^T\cdot M)\cdot p &= \lambda \cdot p
+\end{split}
+\end{equation}
+
+Here, $p$ is the last eigenvector of $M^TM$ since the last eigenvector has the lowest variance along its axis. The explanation for this is similar to our choice with SVD.
+
+\section{Zhang's Algorithm}
+
+This is another algorithm that let's us calibrate the camera. In short, it uses multiple points from a planar object to estimate the calibration matrix. I didn't really study this in depth. Will add later if required.

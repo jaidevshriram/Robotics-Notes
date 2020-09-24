@@ -1,0 +1,228 @@
+\chapter{Linear Algebra Overview}
+
+This chapter is critical to understanding the basics of what drives everything useful. This ranges from modelling problems and our data to processing them for deep learning, triangulation, and much more. In general, we can say that a robot has sensors, a CPU, and actuators. Each work with data and modelling this data is critical to processing it. For instance, the coordinate system used to represent objects could be cartesian, polar, etc.
+
+\section{Vectors and Matrices}
+
+Nothing new here. Vectors are single row/column matrices that represent a quantity. We will mostly be dealing with column vectors exclusively. Using vectors and matrices, we can model equations concisely. For instance,
+
+\begin{equation*}
+\begin{split}
+    3u + 4v & = -6 \\
+    9u - 5v &= 3
+\end{split}
+\end{equation*}
+
+can be represented as $Ax = b$ where A is a matrix, and x, b are column vectors.
+
+\begin{equation*}
+    \begin{bmatrix}
+    3 & 4 \\
+    9 & -5
+    \end{bmatrix} 
+    \begin{bmatrix}
+    u \\
+    v
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    -6 \\
+    3
+    \end{bmatrix}
+\end{equation*}
+
+Writing this in \LaTeX  is a pain and this information is trivial. Refer to the slides if this is confusing.
+
+\section{Length of Vector}
+
+There are various measures that represent the length of a vector. The norm is a function that lets us do this by taking a vector and returning a non-negative number. It satisfies few properties:
+
+\begin{enumerate}
+    \item Positivity: $\norm{x} >= 0$
+    \item Definiteness: $\norm{x} = 0$ if and only if $x=0$
+    \item Absolutely Homogenous: $\norm{\alpha x} = \abs{x} \norm{x}$
+    \item Triangle Inequality: $\norm{x + y} \leq \norm{x} + \norm{y}$
+\end{enumerate}
+
+There are various norms that exist such as L2 norm (root of sum of squares), L1 norm (sum of absolute values), infinity norm and p-norm ($\norm{x}_p = (\abs{x_1}^p + \abs{x_2}^p + \cdots \abs{x_n}^p)^{1/p}$).
+
+\section{Angle}
+
+We can gauge orthogonality using inner product which is a generalization of dot product usually. It is a function that takes two vectors and returns a real number. It follows properties:
+
+\begin{itemize}
+    \item Positivity: $\langle x, x \rangle \geq 0$
+    \item Definiteness: $\langle x, x \rangle = 0$ if and only if $x = 0$
+    \item Additivity: $\langle x+y, z \rangle = \langle x, z \rangle + \langle y, z \rangle$
+    \item Homogeneity: $\langle \lambda x, y \rangle = \lambda \langle x,y \rangle$
+    \item Symmetry: $\langle x, y \rangle = \langle y, x \rangle$
+\end{itemize}
+
+\subsection{Dot Product}
+
+The dot product of two vectors $x, y \epsilon \mathbb{R}^n$, is 
+\begin{equation}
+x \cdot y = \Sigma_{i=1}^{n} x_i y_i
+\end{equation}
+
+Orthogonal vectors satisfy $\langle x, y \rangle = 0$
+
+We can use any other norm in a inner product space to measure lengths as well.
+
+\section{Cross Product}
+
+Given two vectors $x$ and $y$, the cross product $x \times y$ is a vector $z$ perpendicular to both $x$ and $y$ with a direction perpendicular to both vectors and direction given by right hand rule. 
+
+This expression is commonly understood and won't be covered in depth.
+
+\subsection{Equivalent Forms}
+
+There are multiple ways to represent the cross product. The most popular one for computing utilizes matrices and computes cross product by multiplying matrices. Look at slide 14/43 in the lecture slides to see the formulation. It is using a skew symmetric matrix to calculate the cross product.
+
+\section{Vector Space}
+
+The vector space is a set of vectors that are closed under vector addition and scalar multiplication operations. Some operations possible with vectors are:
+
+\begin{itemize}
+    \item Vector Addition
+    \item Scalar Multiplication
+    \item Dot Product
+    \item Cross Product
+\end{itemize}
+
+Remember the basic conditions of linear independence and span. Vector sets that satisfy both form the basis for a vector space. The dimension of a vector space is the cardinality of a basis.
+
+\section{Matrix-Matrix \& Matrix-Vector Operations}
+
+There is nothing special to this section but based on how we choose to look at the product, we can realize the operation in different ways. All these are equivalent. Look at the slides 17-19 for more.
+
+Also look at slide 26 for an understanding of row space, null space, and how they relate to each other. It is quite interesting.
+
+\section{Trace}
+
+This is the sum of all diagonal elements in a matrix.
+
+\section{Inverse}
+
+You know what it is:
+
+\begin{equation}
+    AA^{-1} = A^{-1}A = I
+\end{equation}
+
+The inverse may not exist for all matrices and needs to meet some conditions.
+
+\section{Rank}
+
+The row and column rank are the largest subset of rows/columns that constitute a linearly independent set. Some interesting properties of row and column rank are:
+
+\begin{itemize}
+    \item row rank = column rank
+    \item $rank(A) = rank(A^T)$
+    \item $rank(A+B) \leq rank(A) + rank(B)$
+    \item $rank(AB) \leq min(rank(A), rank(B))$
+\end{itemize}
+
+Inverse does not exist when A is not full rank.
+
+\section{Miscellaneous Notes}
+
+Slide 27 of the deck is a very new way of looking at determinant. Not yet understood entirely.
+
+Frobenius norm is a commonly used norm: $\norm{A}_F = \sqrt{\Sigma_{i=1}^{m}\Sigma_{j=1}{n}\abs{a_{ij}}^2}$
+Kronecker product is essentially the tensor product of two matrices.
+
+\subsection{Role of orthogonal matrices}
+
+Orthogonal matrices act as length preserving and angle preserving transformations. THey ensure that the dot product of two vectors remain the same before and after transformation. So, if we imagine an orthogonal transformation on a unit cube, then it essentially just creates a new unit cube. This isn't the case with all linear transforms obviously - which can stretch the cube, squash it to a square (parallelogram), or even a line - depending on the rank of the transform matrix. \href{http://www.math.lsa.umich.edu/~kesmith/OrthogonalTransformations2017.pdf}{These set of questions} offer some nice examples to get a hold of this quickly.
+
+\section{Quadratic Forms}
+
+Read more and write
+
+\section{Matrix Decomposition}
+
+A matrix decomposition is factoring a matrix such that it is represented as the product of multiple matrices. There are various matrix decompositions that exist. These are primarily done for ease of computation and optimization.
+
+\subsection{Eigen Decomposition}
+
+This decomposes a matrix into eigenvectors and eigenvalues. We know that an eigenvector, is a vector that satisfies $Av = \lambda v$. 
+
+Now, we if have a series of equations of the form:
+
+\begin{equation}
+\begin{split}
+    Ax_1 &= \lambda_1 x_1 \\
+    Ax_2 &= \lambda_n x_2 \\
+    &= \vdots \\
+    Ax_n &= \lambda_n x_n \\
+\end{split}
+\end{equation}
+
+This set of vectors $\{x_1, x_2, \cdots, x_n\}$ can be represented as a matrix with these vectors are column vectors. Let this matrix be $Q$. Then,
+
+\begin{equation}
+    AQ = Q\times diag(\lambda)
+\end{equation}
+
+where $diag(\lambda)$ is the matrix with eigenvalues in the diagonal. Hence, we can rewrite this matrix as:
+
+\begin{equation}
+    A = Q \times diag(\lambda) \times Q^{-1}
+\end{equation}
+
+\subsection{Singular Value Decomposition (SVD)}
+
+Any real $m\times n$ matrix $A$ can be uniquely decomposed as:
+
+\begin{equation}
+    A = UDV^T
+\end{equation}
+
+Here, $A$ is a matrix with $x_i$ as it's column vectors.
+
+\href{https://www.youtube.com/watch?v=nbBvuuNVfco}{This} video is a great reference to see the intuition behind this decomposition and what each of the entities in the decomposition refer to.
+
+$U$ can essentially be seen as the eigen series of the quantities measured in column vectors of $A$. The $\Sigma$ variable is the scaling and has an ordering. Hence, values that can cause more variance come first, heirarchically arranged. This arrangement corresponds to $U$ as well. The matrix $V^T$ has columns that represent what mixture of the product of previous two matrices can result in the original $x_i$ vector represented in A back. 
+
+A detailed look at the SVD procedure and usecases can be found \href{https://www.cse.unr.edu/~bebis/MathMethods/SVD/lecture.pdf}{here}.
+
+SVD is extremely useful in several scenarios. One intuitive usecase is in image compression. We know that SVD gives an ordering of singular values. To compress an image, we can delete the low importance onces entirely, reducing the dimension of an image. It also has applications in regression and modelling where it can help minimize certain function such as total least squares.
+
+That said, the above explanation isn't enough to see how SVD works. \href{http://www.ams.org/publicoutreach/feature-column/fcarc-svd}{This} is a good resource with baby hand holding explanations.
+
+As shown in the SMAI course, one beautiful thing about SVD is its ability to capture latent space. Or rather, hidden features. In the image example, we showed that we can choose the most important features - we never tell it WHAT features exist. \href{https://sifter.org/~simon/journal/20061211.html}{As this amazing resources explains}, SVD can help find hidden features which can help in recommender systems, or even in text modelling (finding keywords/topics of a document). Netflix uses SVD to make recommender systems in fact, predicting the rating a user would give a movie that he/she hasn't seen yet.
+
+\subsection{Lower-Upper Decomposition}
+
+In LU decomposition, we express a matrix $A$ as follows:
+
+\begin{equation}
+    A = LU
+\end{equation}
+
+where $L$ is a lower triangular matrix and U is an upper triangular matrix. This is essentially the matrix form of gaussian elimination. As per wikipedia "Computers usually solve square systems of linear equations using LU decomposition, and it is also a key step when inverting a matrix or computing the determinant of a matrix".
+
+\subsection{QR Decomposition}
+
+The QR decomposition is factorizing a matrix into an orthogonal matrix and triangular matrix such that:
+
+\begin{equation}
+    A = QR
+\end{equation}
+
+where Q is orthogonal and R is upper triangular.
+
+A popular way to calculate this is to use the  Gram–Schmidt procedure, which finds an orthogonal basis from a set of vectors by removing the projection of a vector on the remaining iteratively.
+
+\subsection{Cholesky Decomposition}
+
+This is a decomposition of a positive definite square matrix into the product of a lower triangular matrix and it's transpose. In general,
+
+\begin{equation}
+    A = LL^*
+\end{equation}
+
+where L is the lower triangular matrix with real and positive diagonal entries. This decomposition is possible for every positive definite matrix and has a unique decomposition.
+
+This decomposition is primarily useful for solving linear equations and in Kalman filters.

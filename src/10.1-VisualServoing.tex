@@ -1,0 +1,81 @@
+\chapter{Visual Servoing}
+
+Visual servoing is the task of moving from area to another when you know what the views from these areas are. Or, we have an initial image and a desired image that we are trying to recreate using motion. Servo refers to an actuator that is responsible for position control, hence 'Visual Servoing'.
+
+\href{https://libgen.lc/scimag/ads.php?doi=10.1109/mra.2006.250573}{From this tutorial on Visual Servoing (from the journal on Robotics)}The  vision  data  may  be acquired  from  a  camera  that  is  mounted  directly  on  a  robot manipulator  or  on  a  mobile  robot,  in  which  case  motion  of the robot induces camera motion, or the camera can be fixed in the workspace so that it can observe the robot motion from a stationary configuration.
+
+\section{Image Processing for Navigation}
+
+We can extract features in real time that can be useful for robot motion control. Low level processing can then be done. Segmentation is limiting our focus to particular sections of our image. We can also do interpretation - optical flow. Optical flow is figuring out the new states with information from current state and some change.
+
+For this problem, we can imagine that we have one or may cameras that are positioned differently.
+
+There are two types of visual servoing - indirect and direct.
+
+In indirect, the robot has a state in cartesian coordinate system. It has views from this state and control law will tell us what cartesian coordinate operations must be done to reach the next state. But, we may not always have cartesian coordinate systems.
+
+In direct/internal visual servoing, we use local reference points and replace the cartesian controller with one based on vision that directly computes joint reference commands. 
+
+Classification of schemes:
+
+\begin{itemize}
+    \item Position based visual servoing (PBVS) - We are working in the 3D space to determine the pose of the object and the commands required to achieve it. 
+    \item Image based visual servoing (IBVS) - This largely uses features in images and the error between the current one and desired features. This is what's largely done at RRC.
+\end{itemize}
+
+\subsection{PBVS}
+
+3D reconstruction is quite a difficult task. Here, control law is quite easy since we are using cartesian coordinates with a global reference. 
+
+\subsection{IBVS}
+
+Here, we have extracted features in a local reference frame and hence, control law is difficult - actions hard to determine accurately.
+
+Images contain spatial information and the pixels tell you something about the captured image. Humans can obviously infer changes in position when given multiple images, and even more so when given the video of the change in position. Computers are tasked with inferring this by looking at pixel data alone. 
+
+\section{Optical Flow}
+
+Optical flow or how the images flow, tracks the apparent motion of pixels in a sequence of images or a video. 
+
+We make some assumptions for optical flow that help us:
+
+\begin{itemize}
+    \item Pixel intensities do not rapidly change between consecutive frames. 
+    \item Motion is smooth and it is slow - there is some overlap. This an assumption more common in some methods of optical flow and may change.
+\end{itemize}
+
+One popular application for visual servoing is in the case of robotic arms that are performing surgery.
+
+\section{Lucas-Kannade}
+
+This is an extremely popular algorithm that aims to solve the optical flow problem. It can give an estimate of movement of interesting features across time, across images.
+
+It works on black and white images! and assumes that the movement is only slight.
+
+The technique largely relies on tracking the change in intensity of pixels. We know that if some bright spot moves below, then our camera has moved in the opp direction. Now, imagine doing this on a much bigger scale with more pixels - using neighbourhoods of pixels. 
+
+We essentially get an equation of the form:
+
+\begin{equation}
+    I_x(x, y)\cdot u + I_y(x,y)\cdot v = -I_t(x, y)
+\end{equation}
+
+Now imagine, doing this for a set of points that are $x+\delta x$, where $\delta x$ can take a set of values. We can stack these equations on top of each other. 
+
+\begin{equation}
+    S\begin{pmatrix}
+    u \\
+    v
+    \end{pmatrix} = \vec{t}
+\end{equation}
+
+The exact solution cannot be found always, so we solve the least square formulation:
+
+\begin{equation}
+    S^TS\begin{pmatrix}
+    u \\
+    v
+    \end{pmatrix} = S^T\vec{t}
+\end{equation}
+
+Like all things in life, this algorithm has come to an optimization problem as well - making a guesstimate of the best displacement across images. This is apparently an efficient algorithm to compute optical flow.

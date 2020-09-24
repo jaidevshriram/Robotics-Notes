@@ -1,0 +1,14 @@
+\chapter{Reinforcement Learning}
+
+Value iteration is a very expensive operation since it has high space complexity. Hence, we may use tabular Q-Learning. 
+
+\section{Tabular Q-Learning}
+
+We choose various actions and consider the next state.
+
+In reinforcement learning, there is exploration and exploitation. Exploration is realizing what states we reach based on actions. Here, we can randomly choose actions. In exploitation, we will use information about the transitions and choose actions intelligently. 
+\subsection{DQN}
+
+Here, we use a neural network and instead of using parameters from the table, we use parameters of the neural network. The neural network approximates Q-values. Similar states will give us similar Q-values. We then use gradient descent.
+
+The proble

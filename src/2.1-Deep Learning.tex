@@ -1,0 +1,183 @@
+\chapter{Introduction to Machine Learning}
+
+As per Tom Mitchell, machine learning is a new form of computer program that can learn from an experience with respect to some class of tasks, with a performance measure.
+
+There are a few categories of ML:
+
+\begin{itemize}
+    \item Supervized Learning: Labeled data (input and output pairs exist). The machine learning model will be able to predict the output when given a set of inputs. Example, in linear regression, we have the input set and know the range of the output.
+    \item Unsupervized Learning: There are no labels/targets for this data. Hence, we do not know what the output it supposed to be. Here, we essentially try to learn some patterns or features for this set of data. A common task is clustering various points (the number of clusters may not be evident either).
+    \item Reinforcement Learning: Here, it's not like the previous two but has elements of both. In RL, there is an action, a state, a reward, and an environment. For instance, a robot can take an action which affects the environment, changing the state and gains a reward for this sequence. The purpose of the RL agent is to decide the actions (from a defined space) to optimize the rewards received. For an object avoiding robot, we can imagine that the cost of colliding or reward is negative (not desirable). More on this will be covered later.
+\end{itemize}
+
+There are more such as semi-supervised but they will not be discussed.
+
+\section{Supervised Learning}
+
+There is a training dataset which is pre-labelled. The ML algorithm is required to come up with a hypothesis function that can add labels to an unlabeled input. Essentially, we need a function $f(x) = y$ where x is the input features and y is the output we want to predict. This function should model the training data well and model unseen data well too. 
+
+\subsection{Classification}
+
+In classification, the hypothesis function is defined as $h: x \to y$, where $x \epsilon R^m$ and $y \epsilon \{0,1,\cdots ,k\}$
+
+\subsection{Regression}
+
+In regression, the hypothesis function maps input to a continuous output range. Example: Stock market prediction.
+
+\section{Hypothesis Space}
+The hypothesis space can usually be extremely large, and often infinitely large. For instance, an integer domain. 
+
+
+\section{Neural Networks at a glance}
+A neural network with a single hidden layer, a finite number of neurons and non-linear activation functions such as sigmoid units was proved to be a universal function approximator. These are some of the most useful machine learning algorithms. Obviously, a single layer is not very useful for modelling but this can be explored in more depth later. If you want, watch 3Blue1Brown's videos on neural networks.
+
+\section{Model Selection}
+
+There are typically two datasets - train and test. The training set is the data that we use to train the ML Algorithm. The test data is meant to mimic how the model will perform in real life. It is an unseen set of data that can gauge how good the model is. We also use a validation set for similar reasons.
+
+\textbf{True error rate}: The classifier error on the ENTIRE population. This is nearly impossible to determine but estimates can be made.
+
+We have error rate in the training set. For instance, 95\% accuracy in training data means that with 95\% data we can predict our output. True error data is not limited by the train or test data but rather the entire sample space.
+
+\subsection{Holdout Method}
+
+We can split the dataset into two groups - training and test. We can keep adding data to the training data, and test on test data until the test error is satisfactory
+
+\textbf{Epochs vs Mean Square Error}: Epochs are the number of iterations on which it is trained. Once we find a minimum error for the test data after plotting it, we can stop. Increasing the epochs risks over fitting since it learns too much from the training set.
+
+\section{K-Fold Cross Validation}
+
+We create K-Fold partitions of the dataset. For each each of the K experiments, we use K-1 folds for training and remaining set for the training. The true error here is \textbf{estimated} as the average error rate across all experiments. 
+
+\subsection{No of Folds}
+
+With large number of folds, the bias of true error estimator will be small - more accurate. The variance of the true error will also be large. Additionally, the computational time will be large as well.
+
+With small number of folds, the computational time may be reduced and variance may be small but bias will be larger. The training set size will have reduced quite a bit and in Deep Learning we want size of training data to be high. 
+
+For large datasets, even 3-Fold Cross Validation is accurate enough. Sometimes, 5-Fold Cross validations is common too. For very sparse datasets, we may have to use leave-one-out in order to train on as many examples as possible. 
+
+\section{Hyper parameters}
+
+Across various machine learning methods, there are various parameters that can be tweaked. From our previous examples, it could be number of layers in the neural network or choice of folds. These hyper parameters should NEVER be based on the test set - as they are meant to be reflections of real life. Otherwise, overfitting on test set is also possible. 
+
+We can choose our hyperparameters by training and then validating performance on a validation test. And, we can finally test on the test set.
+
+\section{Bias-Variance Tradeoff}
+
+\begin{center}
+    \textbf{Total Error = Bias + Variance + Irreducible Error}
+\end{center}
+
+Even a perfect model will not be able to reduce all the errors as the training data itself may contain noise. This, we try to reduce the bias and variance as much as possible. Hence, it's nearly impossible to get 100\% accuracy in a dataset. If we do get 100\%accuracy then the dataset is too simple. 
+
+\subsection{Bias}
+
+The difference between the average prediction of our model and correct value. In regression, it is the square of the difference. Model with high bias is indicative of oversimplification in the model and leads to high error in the training and test error.
+
+\subsection{Variance}
+
+Variance is the variability of model prediction for a given data point which tells us spreads of our data. Basically, on changing the input, how much does the output get affected. A model with high variance doesn't generalize very well on unseen data. 
+
+We ideally want low bias and low variance but this is easier said than done. It has been found that as model complexity increases, the bias reduces but variance increases. This is the tradeoff between the two. We can measure for these errors in K-Fold Cross validation to minimize both.
+
+\section{Overfitting and Underfitting}
+
+Underfitting happens when the model is too simple and is unable to capture the underlying patterns of the data. It usually has high bias and low variance - it is bad predictor and is consistently bad (hence low variance)
+
+Overfitting happens when the model captures too much of the noise as well. It usually has low bias as a result but high variance.
+
+\section{Maximum Likelihood Estimation (MLE) and Maximum A Posteriori (MAP)}
+
+MLE and MAP are both methods of estimating some variable in the setting of probability distributions or graphical models.
+
+\subsection{MLE}
+
+\href{https://www.probabilitycourse.com/chapter8/8_2_3_max_likelihood_estimation.php}{This} is a great resource for reading up about MLE. As per \href{https://towardsdatascience.com/probability-concepts-explained-maximum-likelihood-estimation-c7b4342fdbb1}{another great article}, "Maximum likelihood estimation is a method that determines values for the parameters of a model. The parameter values are found such that they maximise the likelihood that the process described by the model produced the data that were actually observed." This is the best way to understand the importance of MLE in ML.
+
+In \textbf{MLE}, we choose $\theta$ that maximizes the probability of observed data.
+
+Here, we are trying to find the value $\theta$ that estimates the data best.
+
+\textbf{Why is this relevant?}
+
+Most of the optimization in CNN, or NN in general we want to find the best parameters using MLE.
+
+Let the likelihood function be $P(X|\theta)$. The, the MLE for $\theta$ is:
+
+\begin{equation}
+\begin{split}
+    \theta_{MLE} &= arg_{\theta} \; maxP(X|\theta) \\
+    &= arg_{\theta} \; max \; \Pi_{i} P(x_i | \theta)
+\end{split}
+\end{equation}
+
+We generally do not tend to use this since the number can become 0 quickly as numbers go to infinity. Hence, we tend to use the logarithm and try to minimize that:
+
+\begin{equation}
+\begin{split}
+    \theta_{MLE} &= arg_{\theta} \; max \log P(X|\theta) \\
+    &= arg_{\theta}\; max \; \log \Pi_{i} P(x_i | \theta) \\
+    &= arg_{\theta}\; max \; \Sigma_i \log P(x_i | \theta)
+\end{split}
+\end{equation}
+
+The two functions are equivalent since the logarithm is monotonically increasing, and hence can be used.
+
+\subsection{MLE for Gaussian}
+
+\textit{A Gaussian or normal distribution is one which is symmetric about the mean and peaks at the mean value. Read up if confused.}
+
+The parameters for a Gaussian distribution are the mean ($\mu$) and variance ($\sigma^2$). When fitting a Gaussian to our dataset, we take the sample mean and variance of the dataset and use that as parameter for the Gaussian. 
+
+Given observations $x_1, x_2, \cdots, x_N$ the likelihood of those observations for a certain $\mu$ and $\sigma^2$ is:
+
+\begin{equation}
+    P(x_1, \cdots, x_N | \mu, \sigma^2) = \Pi_{n=1}^{N} \; \frac{1}{\sigma\sqrt{2\pi}} \: exp\{\frac{-(x_n-\mu)^2}{2\sigma^2}\}
+\end{equation}
+
+The log likelihood for the same is:
+
+\begin{equation}
+    L(\mu, \sigma) = -\frac{1}{2}N\log(2\pi \sigma^2) - \Sigma_{n=1}^{N} \frac{(x_n - \mu)^2}{2\sigma^2}
+\end{equation}
+
+But, the sigma (variance) that we get from MLE is a biased estimator. In statistics, we evaluate the “goodness” of the estimation by checking if the estimation is “unbi-ased”. By saying “unbiased”, it means the expectation of the estimator equals to the true value, e.g.if $E[x] = \mu$ then the mean estimator is unbiased as per \href{https://dawenl.github.io/files/mle_biased.pdf}{this}. \href{https://stats.stackexchange.com/questions/136673/how-to-understand-that-mle-of-variance-is-biased-in-a-gaussian-distribution}{This} stack overflow answer has a great explanation as to why the variance is biased.
+
+"The intuition is that in a non-squared sample mean, sometimes we miss the true value $\mu$ by over-estimating and sometimes by under-estimating. But, without squaring, the tendency to over-estimate and under-estimate will cancel each other out. However, when we square $\bar{x}$ the tendency to under-estimate (miss the true value of $\mu$ by a negative number) also gets squared and thus becomes positive. Thus, it no longer cancels out and there is a slight tendency to over-estimate.
+ 
+\subsection{MAP}
+
+The MAP estimate of a random variable $X$, given that we have observed $Y = y$ is given by the value of x that maximizes $P_{X|Y}(x|y)$.
+
+\href{https://www.probabilitycourse.com/chapter9/9_1_2_MAP_estimation.php}{This} is a reference from the probability course about MAP estimation. It is decent and has a few examples that explain the concept.
+
+MAP usually comes up in a Bayesian setting where we work on a posterior distribution, not \textbf{only} the likelihood. So usually, for:
+
+\begin{equation}
+\begin{split}
+    P(\theta | X) &= \frac{P(X|\theta)P(\theta)}{P(X)} \\
+    &\alpha \; P(X|\theta)P(\theta)
+\end{split}
+\end{equation}
+
+We are ignoring the normalizing constant as proportionality is sufficient.
+
+Let's assume that we have a classifier for cats and dogs. If we know the general distribution of dogs and cats in the world, we can feed that ratio to the model and this is prior information. In general, this prior is expert knowledge.
+
+\begin{equation}
+\begin{split}
+    \theta_{MAP} &= arg_{\theta}\; maxP(X|\theta)P(\theta) \\
+    &= arg_{\theta}\; max \log P(X|\theta) + \log P(\theta) \\
+    &= arg_{\theta}\; max \log \Pi_i P(x_i|\theta) + \log P(\theta)\\
+    &= arg_{\theta}\; max \; \Sigma_i \log P(x_i|\theta) + \log P(\theta)
+\end{split}
+\end{equation}
+
+Comparing MLE and MAP, the only thing that differs is the inclusion of prior in MAP. Hence, for a uniform prior, the MAP is same as MLE. If we take derivative of the distribution, it will be 0 since it won't change. Note that we are trying to maximize the function here for all values of theta. So, derivative is taken to reach the optima using a method such as gradient descent. \href{https://wiseodd.github.io/techblog/2017/01/01/mle-vs-map/}{This} is a good resource that differentiates and connects between MLE and MAP.
+
+"If we use different prior, say, a Gaussian, then our prior is not constant anymore, as depending on the region of the distribution, the probability is high or low, never always the same.
+
+What we could conclude then, is that MLE is a special case of MAP, where the prior is uniform!"
+
+Most of the CNN approaches may use MLE but other algorithms exist which use MAP. 

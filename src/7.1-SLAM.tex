@@ -1,0 +1,178 @@
+\chapter{Optimization}
+
+Before looking at SLAM, it's important to look at some fundamental math that is used. These techniques aren't limited to SLAM and have other uses, and the next chapter may not even mention these methods but these are relevant nonetheless. 
+
+\section{Convex Optimization}
+
+Convex optimization is a special class of problems that deals with convex problems. There is a popular book by Stephen Boyd - \href{http://93.174.95.29/main/B8624D493F5332A34A826B9CC74B88B1}{Convex Optimization} (the link is a ps.gz file). 
+
+In general, an optimization problem is one where you minimize a function set to certain constraints. A lot of problems can be posed as an optimization problem. Redundant to explore what it means to optimize in more detail since we've already seen instances in the math review section. 
+
+\section{Linear Least Squared Optimization}
+
+In the end, problems such as SLAM have a common goal - minimize a function. Often, these problems are posed as least squares systems.
+
+\begin{equation}
+\begin{split}
+    &Ax=b \\
+    &A\text{ is }m\times n \text{ matrix where } m > n
+\end{split}
+\end{equation}
+
+For this chapter we consider overdetermined systems (more data than required) and full rank (due to noise). It is full rank because the rank of the matrix is the column rank ($n < m$) and all columns are linearly independent. We can say that the columns are linearly independent because of the noise in the data.
+
+As per Boyd:
+
+A least-sqaures problem is an optimization problem with no constraints and an objective which is sum of squares of the form $a_i^Tx-b_i$:
+
+\begin{align}
+    \text{minimize }f_0(x)=\norm{Ax-b}_2^2 = \sum_{i=1}^k(a_i^Tx-b_i)^2
+\end{align}
+
+We've encountered this formulation before as well while doing linear regression. The solution can be reduced to solving this equation:
+
+\begin{equation}
+    (A^TA)x=A^Tb
+\end{equation}
+
+and the analytical solution would be:
+
+\begin{equation}
+    x=(A^TA)^{-1}A^Tb
+\end{equation}
+
+The time taken to solve this problem varies depending on the sparsity of the matrix $A$. Sparsity refers to the number of non-zero entries in the matrix.
+
+\subsection{Norm Approximation}
+
+The simplest norm approximation problem is an unconstrained problem of the form
+
+\begin{equation}
+    \text{minimze } \norm{Ax-b}
+\end{equation}
+
+We can pose this as a least squares approximation by squaring the l2 norm. This would be:
+
+\begin{equation}
+        \text{minimze } \norm{Ax-b}_2^2
+\end{equation}
+
+The analytical solution to this problem can be solved by using this convex quadratic function:
+
+\begin{equation}
+    f(x) = x^TA^TAx - 2b^TAx + b^Tb
+\end{equation}
+
+A point $x$ minimizes $f$ iff the derivative is 0:
+
+\begin{equation}
+    \nabla f(x) = 2A^TAx - 2A^Tb = 0
+\end{equation}
+
+This is the same formulation that we had earlier and will yield the solution $x=(A^TA)^{-1}A^Tb$.
+
+\textbf{How do we know that $A^TA$ is invertible?}
+
+The assumption here is that the columns of $A$ are linearly independent. In that case, let $x$ be a vector that satisfies $(A^TA)x=0$. Multiplying by $x^T$ on both sides,
+
+\begin{equation*}
+    0 = x^T0=x^T(A^TA)x=x^TA^TAx=\norm{Ax}^2
+\end{equation*}
+
+So, $Ax=0$ and columns of A are linearly independent. Hence, the only solution to this is $x=0$. This is also the only solution to $A^TAx=0$, which means that $A^TA$ is invertible. 
+
+\textit{Why is that last sentence true?}
+
+If $x=0$ is the \textbf{only} solution to the equation $Ax=0$, then this is case. Or, the nullspace of $A$ is limited to zero vector if and only if $x=0$ is the only solution to $Ax=0$. 
+
+In a singular matrix, the matrix does not have an inverse and the nullspace will have more than the zero vector. - this part is obvious but wasn't immediately clear at the time.
+
+Here the pseduoinverse is $A^\dagger = (A^TA)^{-1}A^T$. The pseudoinverse takes on various forms depending on the type of system - overdetermined, undertermined, and full row, full column rank cases. Information about these cases can be found \href{https://math.stackexchange.com/questions/1537880/what-forms-does-the-moore-penrose-inverse-take-under-systems-with-full-rank-ful/2200203#2200203}{in this stack overflow answer}. The logic behind the SVD decompositions and the "proofs" aren't very explanatory though.
+
+\subsection{Using SVD}
+
+This algorithm is from the appendix of MVG by Ziesserman:
+
+\begin{enumerate}
+    \item Find the SVD $A=UDV^T$
+    \item Set $b'=U^Tb$
+    \item Find the vector $y$ defined by $y_i = b_i'/d_i$ where $d_i$ is the $i-$th diagonal entry of $D$
+    \item The solution is $Vy$
+\end{enumerate}
+
+\section{Non-Linear Optimization}
+
+Nonlinear optimization is the term used to describe an optimization problem when the objective or constrain functions aren't linear and not convex. As a result, these non linear problems are particularly hard for even low number of variables.
+
+These sections are largely from Boyd's book on 'Convex Optimization'.
+
+\subsection{Local Optimization}
+
+Local Optimization is akin to solving for a local minima. With a non-linear function, the search space can be unbelievably large and difficult to navigate. As such, it is more convenient and computationally feasible to search for the best value within a certain range. We may not get the best solution but may get a "good solution". This is familiar because it was explored earlier with gradient descent - we may hit a local minima. 
+
+The trick with this is that local optimization will tend to be iterative and most importantly, rely on a good initialization. This reminds of the genetic algorithm assignment in MDL - depending on where you start your search space, you are restricted to the best values in that area.
+
+\subsection{Global Optimization}
+
+The task with global optimization is the BEST point for our formulation. This is an extremely difficult challenging problem and the compromise here is effeciency of computing the solution. The worst case complexity of global optimization tends to grow exponentially with increasing complexity. This is useful for cases where we NEED to find the absolute maxima or a minima in situations such as safety. We need to be assured that the worst case scenario can still be handled for instance, in which case we are dealing with a global optimization problem for the global worst point.
+
+\section{Unconstrained Minimization}
+
+Often, even for convex problems, it is not possible to arrive at an analytical solution by setting the derivative to zero. There may be multiple reasons for this - yet to see a reason for this but Boyd says so. Hence, we rely on an iterative algorithm to solve the optimality equation.
+
+\subsection{Gradient Descent}
+
+This has already been explored but anyway. Here, we move in the opposite direction of the gradient. The gradient is the direction of steepest ascent. 
+
+\begin{equation}
+    \Delta x = -\nabla f(x) = -J_f
+\end{equation}
+
+\subsection{Newton's Method}
+
+Here, the step is defined as:
+
+\begin{equation}
+    \Delta x = -\nabla^2[f(x)]^{-1}\nabla f(x)
+\end{equation}
+
+This is like the gradient descent but just that we use the newton step defined above as the search direction. Newton's method is known to provide faster convergence for optimization (more positive reasons in Boyd) but is not commonly used. This is primarily because of the cost of forming and storing the hessian, and the cost of computing the newton step.
+
+\section{Non-Linear Least Squares}
+
+This problem involves solving a least square formulation of a non linear function.
+
+\begin{equation}
+    \text{minimize }\norm{f(x)}^2
+\end{equation}
+
+To accomplish this, we can do this:
+
+\begin{equation}
+    \text{minimize }F(x) = \frac{1}{2}f(x)^Tf(x)
+\end{equation}
+
+\textit{We add the 1/2 term because it makes the derivative better - it doesn't change the function optima obviously.}
+
+\subsection{Gauss-Newton}
+
+The Gauss-Newton algorithm can be used to solve non-linear least-squares problems. It essentially solves for the function mentioned above.
+
+Here, the update rule is:
+
+\begin{equation}
+    \Delta x = -(J^TJ)^{-1}J^Tf(x)
+\end{equation}
+
+It tries to model the curvature of a region.
+
+\subsection{Levenberg Marquardt}
+
+"The Levenberg-Marquardt algorithm combines two  minimization methods: the  gradient descent method and the Gauss-Newton method.  In the gradient descent method, the sum of the squared errors is reduced by updating the parameters in the steepest-descent direction.  In the Gauss-Newton method, the sum of the squared errors is reduced by assuming the least squares function is locally quadratic, and finding the minimum of the  quadratic.   The  Levenberg-Marquardt  method  acts  more  like  a  gradient-descent method  when  the  parameters  are  far  from  their  optimal  value,  and  acts  more  like the Gauss-Newton method when the parameters are close to their optimal value." from \href{http://people.duke.edu/~hpgavin/ce281/lm.pdf}{Duke Notes}.
+
+\begin{equation}
+    \Delta x = -(J^TJ + \lambda I)^{-1}J^Tf(x)
+\end{equation}
+
+\href{https://cs.nyu.edu/~roweis/notes/lm.pdf}{These notes} give a good description about ideal step sizes. In short, when we are at a steep cliff, we want to take small steps to avoid overshooting, and when we are at a gentle slope, we want to take bigger steps because who has time to tip-toe. This method aims to solve that by being a blend of SGD and Gauss-Newton parameterized by a variable $\lambda$ (blending factor) that determines how much closer we are to SGD or Gauss-Newton. 
+

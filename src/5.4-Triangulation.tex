@@ -1,0 +1,31 @@
+\chapter{Triangulation and Perspective-n-Projection}
+
+\section{Triangulation}
+
+In epipolar geometry, we were never concerned with scene structure, we just wanted positions on images. Now, we will try to find the world point given two views or two images of a world point.
+
+Let $x_1, x_2$ be the coordinates of the image in homogenous coordinates for camera 1 and camera 2. Now, there are rays from each camera center:
+
+\begin{equation*}
+\begin{split}
+    r &= K_1^{-1}x_1 \\
+    s &= R^1_2K_2^{-1}x_2 \text{ where $R^1_2$ converts to image one camera frame}
+\end{split}
+\end{equation*}
+
+With epipolar geometry, we weren't able to determine the world point but we want to try approximating it - done with triangulation. 
+
+Finding the point of intersection for two rays is easier said than done as due to errors in correspondence points, the rays may not intersect. Hence, an approximation will be minimizing the distance between two rays. Obviously, for intersection lines, the distance will be zero.
+
+The points that give us the minimal distance will be such that the difference between two points is perpendicular to the direction of the ray.
+
+Once we obtain the line segment that minimizes the distance, we will find the midpoint of this line and state that it is our estimate of the point in the triangulated world. 
+
+\section{Perspective n Point}
+
+Here, we are given 3D worldpoints and the 2D image correspondence in the camera frame. In simpler terms, the points on the image and the point for each feature in the real world is also known. With this information, we want to calculate the extrinsics of the camera. 
+
+This concept is used extensively in augmented reality. We can see confirmation of this  \href{http://vr.cs.uiuc.edu/node292.html}{here (virtual reality, same concept)}
+
+With P3P we are given 3 points and find the extrinsic parameters of the \textbf{calibrated} camera unlike in DLT. In DLT, we used an uncalibrated camera (also, 11 unknowns, so 6 points are needed). 
+

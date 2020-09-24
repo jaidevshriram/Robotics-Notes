@@ -1,0 +1,14 @@
+\chapter{Reinforcement Learning}
+
+Reinforcement Learning is the branch of ML where an agent is acting in an environment, receving input via sensors and learning what actions to make again. It is very much like a finite state machine. 
+
+A lot of this was covered in the course machine, data, and learning at IIIT - so I've not included much in this section. The slides for the session are: \href{https://raw.githubusercontent.com/RoboticsIIITH/summer-sessions-2020/master/lecture-slides/Reinforcement_Learning/Reinforcement\%20Learning\%20slides.pdf}{here}.
+
+To frame an RL problem, we can consider there to be some grid of states, a set of actions and a set of probabilities for going to a certain state on taking an action. There is a key concept of reward function here (like chocolate at the end of the tunnel) which helps the algorithm optimize for something. 
+
+\section{Value Iteration}
+
+There are some popular algorithms in this domain - value iteration and POMDP. Value iterations, surprisingly, find the value of various states (expected utility) after several iterations. It then decides a policy. A policy is simply a set of rules that the agent must follow when it is at a certain state - go left, go right. The limitation of value based methods is that we need access to the model of the environment, and not efficient for large state and action spaces.
+
+There are other algorithms such as tabular Q-Learning and DQN that use a table and neural nets to optimize for a policy. 
+

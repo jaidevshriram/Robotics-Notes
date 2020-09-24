@@ -1,0 +1,53 @@
+\chapter{Quadropter Dynamics}
+
+\textbf{Why mathematical model}
+
+It is a concise representation of the physical world that we can use to conduct prediction and analysis. 
+
+\section{Kinematics v/s Dynamics}
+
+In school, we tended to use these terms interchangeably. But, kinematics is the study of motion without considering the cause of motion. Dynamics looks at the force and moments in its study of motion.
+
+\section{Rotation in free space}
+
+Rotation happens at the center of gravity - the principle of least action. In fact, equations of motion happen with respect to center of gravity.
+
+The drones exert two forces - thrust and the moment. The thrust from the blade rotations pushes it up. The moment is the "clockwise" / "anti-clockwise" direction that the drone can move in. Just as pushing in a certain direction on a rotating chair lets us rotate, blade rotations will rotate the drone. Drones do not rotate in real life like this because moments call each other.
+
+There are three movements that the drone can do - roll, pitch, yaw. These are accomplished by varying the drone blade speeds such that the moments do not cancel each other out.
+
+The standard for referencing the motors of drone follow an $\alpha$ pattern.
+
+\chapter{Controllers}
+
+When we have a system, we can imagine that it has various actuators. These actuators need some input to determine the change of the system in its environment. The controller then 
+
+\section{On/Off Controller}
+
+This is the most basic controller - it can perform only two actions and based on a threshold it will execute either. Hence, there are abrupt changes and for instance, the acceleration of a car with such a controller would change based on the location. This is clearly not practical since it is so abrupt.
+
+The wave for this can be imagined as a square wave with time - fixed values only.
+
+\section{P Controller}
+
+Here we are setting the control proportional to the current state than switching between binary states. Hence, the frequency of oscillation reduces significantly. Still, the oscillation is dependent on distance from the initial state alone. So, in a car it will ignore velocity and only control acceleration of the car based on distance. The next controller solves this.
+
+\section{PD Controller}
+
+This is the most generally used linear controller. Here, we would control acceleration based on distance from destination and velocity. 
+
+\section{Variational Mechanics}
+
+Any controller can be modelled by Euler-Lagrangian dynamic equations. 
+
+\begin{equation}
+    m(X\ddot{x}
+\end{equation}
+
+\chapter{UAV}
+
+Types of UAV:
+
+\begin{itemize}
+    \item Fixed Wing UAV
+\end{itemize}
