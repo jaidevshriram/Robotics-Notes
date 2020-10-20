@@ -136,7 +136,7 @@ Now, we know that $O_1O_2X$ forms the epipolar plane. Now, $O_1X$ is the same as
 
 Here, note that $\overrightarrow{O_1O_2}$ is represented by translation because that is in fact the transformation between the camera centers! Further, we are writing all these calculations in terms of frame 1. Hence, all coordinates have been transformed to the frame one relatives (by multiplying $R_2^1$ for instance). 
 
-The matrix $E$ seen there is the \textbf{essential matrix} that relates points in terms of normalized pixel coordinates. $E$ has 5-6 degrees of freedom depending on the choice of looking at E - as a projective matrix or not (Wikipedia).
+The matrix $E$ seen there is the \textbf{essential matrix} that relates points in terms of normalized pixel coordinates. E is the cross product of t and R, which also is in homogenous equation space, so translation gives 3 and rotation 3, but because of homogenization, we lose one degree of freedom. or $p^TEp=0$ and $p^T\lambda Ep=0$ which $\implies \lambda E = E$.
 
 $F$ is something more - fundamental lol. 
 

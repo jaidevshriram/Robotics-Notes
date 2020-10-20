@@ -32,13 +32,15 @@ Now, we have some problems - we don't always know which points correspond to ano
 \textbf{Procedure:}
 
 \begin{itemize}
-    \item Get an initial guess for the transform $\{\hat{R}_s^s', t\}$
+    \item Get an initial guess for the transform $\{R^{s'}_{s}, t\}$
     \item Associate each point with a corresponding one.
     \item Solve for optimal transformation
     \item Repeat till convergence
 \end{itemize}
 
 The key thing here is the knowledge of corresponding points is important. Sometimes it is known, sometimes not. In the former case, we have to directly aim for a solution, but in the latter we work on first estimating some correspondences and then looking for a transform (like the algo above). This guesstimate can be found by drawing a normal from a point and seeing what corresponding point we hit. This iterative algorithm is ICP. Look at \href{https://www.notion.so/Point-Cloud-Registration-Iterative-Closest-Point-a25686ce1a11409d838d47bcac43ab4b}{Shubodh's notes from Mobile Robotics} for more explanation about ICP.
+
+\href{https://igl.ethz.ch/projects/ARAP/svd\_rot.pdf}{This resource} on least square ICP solution using SVD not only shows how to solve it (section 4), but offers a detailed proof on how to go about things. The stachniss lectures don't go into detail about WHY we use this as a solution. \textit{It's so well written gahhhhh.}
 
 As mentioned earlier, there are two things:
 
